@@ -1,8 +1,11 @@
 {
   "mcpServers": {
     "runpod-mcp": {
+      "type": "http",
       "url": "https://{POD_ID}-8000.proxy.runpod.net/mcp",
-      "transport": "streamable-http"
+      "headers": {
+        "Authorization": "Bearer {AUTH_TOKEN}"
+      }
     }
   }
 }
