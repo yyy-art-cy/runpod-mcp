@@ -30,12 +30,6 @@ HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "8000"))
 
 AUTH_TOKEN = os.getenv("AUTH_TOKEN", "").strip()
-if not AUTH_TOKEN:
-    sys.stderr.write(
-        "[FATAL] 环境变量 AUTH_TOKEN 未设置。为安全起见服务拒绝启动。\n"
-        "  请在 RunPod Pod 的 Environment Variables 里配置 AUTH_TOKEN 后再启动。\n"
-    )
-    sys.exit(1)
 
 # -------------- MCP 工具定义 --------------
 
@@ -110,4 +104,10 @@ def make_app():
 
 
 if __name__ == "__main__":
+    if not AUTH_TOKEN:
+        sys.stderr.write(
+            "[FATAL] 环境变量 AUTH_TOKEN 未设置。为安全起见服务拒绝启动。\n"
+            "  请在 RunPod Pod 的 Environment Variables 里配置 AUTH_TOKEN 后再启动。\n"
+        )
+        sys.exit(1)
     uvicorn.run(make_app(), host=HOST, port=PORT, log_level="info")
