@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "runpod-mcp": {
+      "url": "https://{POD_ID}-8000.proxy.runpod.net/mcp",
+      "transport": "streamable-http"
+    }
+  }
+}
