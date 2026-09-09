@@ -58,6 +58,27 @@ def gpu_status() -> str:
         return f"执行 nvidia-smi 失败: {exc}"
 
 
+@mcp.tool()
+def ollama_status() -> str:
+    """查询 Pod 内 Ollama 服务状态：版本 + 已加载模型列表。用于验证自托管推理是否就绪。"""
+    import json as _json
+    import urllib.request as _req
+    base = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
+    out = {"base": base}
+    try:
+        with _req.urlopen(f"{base}/api/version", timeout=5) as r:
+            out["version"] = _json.loads(r.read()).get("version", "?")
+    except Exception as exc:  # noqa: BLE001
+        out["version_error"] = str(exc)
+    try:
+        with _req.urlopen(f"{base}/api/tags", timeout=5) as r:
+            data = _json.loads(r.read())
+            out["models"] = [m.get("name") for m in data.get("models", [])]
+    except Exception as exc:  # noqa: BLE001
+        out["models_error"] = str(exc)
+    return _json.dumps(out, ensure_ascii=False, indent=2)
+
+
 # -------------- 鉴权中间件 + 启动入口 --------------
 
 def make_app():

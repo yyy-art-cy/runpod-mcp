@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "runpod-mcp": {
+      "type": "http",
+      "url": "https://ig2x8pjntpg2go-8000.proxy.runpod.net/mcp",
+      "headers": {
+        "Authorization": "Bearer SDHPLUqlXt7dnC4oU7GeFFvKTDBODaUe86JZK3NCnwo"
+      }
+    }
+  }
+}
