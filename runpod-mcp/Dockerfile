@@ -6,8 +6,8 @@
 # 推送到: ghcr.io/<owner>/runpod-mcp/runpod-mcp:latest
 FROM ollama/ollama:latest
 
-# Ollama 镜像基于 Ubuntu 22.04，自带 python3 但需要装 pip
-USER root
+# Ollama 镜像基于 Ubuntu，自带 python3 但没 pip。装 pip + ca-certificates。
+# 注意: 不切换 USER，整个容器以 root 跑（隔离环境，无密码运行，安全无虞）。
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3 python3-pip ca-certificates curl \
     && rm -rf /var/lib/apt/lists/*
@@ -23,17 +23,13 @@ COPY server.py .
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-# Ollama 镜像默认用户 ollama (uid 1000)；保留其对 /app 与 ~/.ollama 的写权限
-RUN mkdir -p /home/ollama/.ollama && chown -R ollama:ollama /app /home/ollama/.ollama
-USER ollama
-
 # MCP 在 8000，Ollama 在 11434
 EXPOSE 8000 11434
 
-# 默认启 Ollama + MCP server；可选通过 env OLLAMA_PRESET_MODELS=llama3.1:8b-instruct-fp16,... 预拉模型
+# 默认启 Ollama + MCP server；可选通过 env OLLAMA_PRESET_MODELS=llama3.1:8b,... 预拉模型
 ENV OLLAMA_HOST=0.0.0.0:11434 \
     OLLAMA_KEEP_ALIVE=10m \
-    OLLAMA_MODELS=/home/ollama/.ollama/models \
+    OLLAMA_MODELS=/root/.ollama/models \
     PYTHONUNBUFFERED=1
 
 ENTRYPOINT ["/app/entrypoint.sh"]
